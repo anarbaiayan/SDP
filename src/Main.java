@@ -1,104 +1,36 @@
-class Product{
-    private String name;
-    private String id;
-    private double price;
-
-    public Product(String name, String id, double price){
-        this.name = name;
-        this.id = id;
-        this.price = price;
-    }
-    public String getName(){
-        return name;
-    }
-    public String getId(){
-        return id;
-    }
-    public double getPrice(){
-        return price;
-    }
-}
-
-class ProductCatalog{
-    public Product searchProduct(String name){
-        System.out.println("Searching product by name: " + name);
-        return new Product(name, "101", 100.0);
-    }
-
-    public Product selectProduct(String id){
-        System.out.println("Selecting product by id: " + id);
-        return new Product("Sample Product", id, 100.0);
-    }
-}
-
-class PaymentProcessor{
-    public boolean processPayment(String paymentDetails, double amount){
-        System.out.println("Payment details: " + paymentDetails + "amount: " + amount);
-        return true;
-    }
-}
-
-class InventoryManager{
-    public boolean checkStock(String productId){
-        System.out.println("Checking stock for product: " + productId);
-        return true;
-    }
-
-    public void updateStock(String productId, int quantity){
-        System.out.println("Updating stock for product: " + productId + " with quantity: " + quantity);
-    }
-}
-
-class ShippingService{
-    public double calculateShipping(String location){
-        System.out.println("Calculating shipping for location: " + location);
-        return 10.0;
-    }
-
-    public void shipOrder(String productId, String location){
-        System.out.println("Shipping order for product: " + productId + " with location: " + location);
-    }
-}
-
-class ShoppingFacade{
-    private ProductCatalog productCatalog;
-    private PaymentProcessor paymentProcessor;
-    private InventoryManager inventoryManager;
-    private ShippingService shippingService;
-
-    public ShoppingFacade(){
-        this.productCatalog = new ProductCatalog();
-        this.paymentProcessor = new PaymentProcessor();
-        this.inventoryManager = new InventoryManager();
-        this.shippingService = new ShippingService();
-    }
-
-    public void placeOrder(String productName, String paymentDetails, String location){
-        Product product = productCatalog.searchProduct(productName);
-        productCatalog.selectProduct(product.getId());
-
-        if(!inventoryManager.checkStock(product.getId())){
-            System.out.println("Product not in stock");
-            return;
-        }
-
-        if(!paymentProcessor.processPayment(paymentDetails, product.getPrice())){
-            System.out.println("Payment failed");
-            return;
-        }
-
-        inventoryManager.updateStock(product.getId(), 1);
-
-        double shippingCost = shippingService.calculateShipping(location);
-        shippingService.shipOrder(product.getId(), location);
-
-        System.out.println("Shipping order successful. Total cost: " + (shippingCost + product.getPrice()));
-    }
-}
+import java.time.LocalTime;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        ShoppingFacade facade = new ShoppingFacade();
-        facade.placeOrder("laptop", "Card", "Astana");
+        RideContext context = new RideContext();
+
+        List<Ride> rides = List.of(
+                new Ride(5, 15, LocalTime.of(8, 30)),  // Short ride during peak hours
+                new Ride(25, 45, LocalTime.of(14, 0)), // Long ride during off-peak hours
+                new Ride(10, 20, LocalTime.of(18, 30)), // Medium ride during peak hours
+                new Ride(15, 30, LocalTime.of(23, 0))  // Medium ride during night (discount hours)
+        );
+
+        for (Ride ride : rides) {
+            context.selectAppropriateStrategy(ride.distance(), ride.startTime());
+            double fare = context.calculateFare(ride.distance(), ride.duration());
+            System.out.printf("Ride: Distance=%.1fkm, Duration=%dmin, Start Time=%s, Fare=$%.2f%n",
+                    ride.distance(), ride.duration(), ride.startTime(), fare);
+        }
+
+        // Test minimum fare
+        Ride shortRide = new Ride(1, 3, LocalTime.of(12, 0));
+        context.selectAppropriateStrategy(shortRide.distance(), shortRide.startTime());
+        double fare = context.calculateFare(shortRide.distance(), shortRide.duration());
+        System.out.printf("Short Ride: Distance=%.1fkm, Duration=%dmin, Start Time=%s, Fare=$%.2f%n",
+                shortRide.distance(), shortRide.duration(), shortRide.startTime(), fare);
+
+        // Test invalid input
+        try {
+            Ride invalidRide = new Ride(-5, 10, LocalTime.of(12, 0));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Caught exception for invalid ride: " + e.getMessage());
+        }
     }
 }
