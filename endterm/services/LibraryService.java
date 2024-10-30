@@ -11,6 +11,7 @@ public class LibraryService {
         books = new ArrayList<>();
         books.add(new Book("1984", "George Orwell"));
         books.add(new Book("To Kill a Mockingbird", "Harper Lee"));
+        books.add(new Book("One Piece", "Eichiro Oda"));
     }
 
     public void addBook(String title, String author) {
