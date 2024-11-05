@@ -10,7 +10,7 @@ public class CommandLineInterface {
     private LibraryService libraryService;
     private UserService userService;
     private Scanner scanner;
-    private User currentUser;  // Keeps track of the logged-in user
+    private User currentUser;
 
     public CommandLineInterface() {
         this.libraryService = new LibraryService();
