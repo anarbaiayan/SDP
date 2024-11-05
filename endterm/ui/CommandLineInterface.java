@@ -104,12 +104,12 @@ public class CommandLineInterface {
                 case "sort":
                     sortBooksByAuthor();
                     break;
-                case "purchaseE":
+                case "purchasee":
                     System.out.print("Enter the title of the ebook to purchase: ");
                     String ebookTitle = scanner.nextLine();
                     purchaseEBook(ebookTitle);
                     break;
-                case "purchaseP":
+                case "purchasep":
                     System.out.print("Enter the title of the print book to purchase: ");
                     String printBookTitle = scanner.nextLine();
                     purchasePrintBook(printBookTitle);
