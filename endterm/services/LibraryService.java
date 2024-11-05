@@ -1,33 +1,38 @@
 package services;
 
+import factories.BookFactory;
+import models.Book;
 import java.util.ArrayList;
 import java.util.List;
-import models.Book;
 
 public class LibraryService {
+    private static LibraryService instance;
     private List<Book> books;
 
-    public LibraryService() {
+    private LibraryService() {
         books = new ArrayList<>();
-        books.add(new Book("One Piece", "Eichiro Oda"));
+    }
+
+    public static LibraryService getInstance() {
+        if (instance == null) {
+            instance = new LibraryService();
+        }
+        return instance;
     }
 
     public void addBook(String title, String author) {
-        books.add(new Book(title, author));
-        System.out.println("Book added: " + title);
+        Book book = BookFactory.createBook(title, author);
+        books.add(book);
     }
 
-    public void removeBook(String title) {
-        books.removeIf(book -> book.getTitle().equalsIgnoreCase(title));
-        System.out.println("Book removed: " + title);
+    public List<Book> getBooks() {
+        return books;
     }
 
-    public void displayBooks() {
-        if (books.isEmpty()) {
-            System.out.println("No books available.");
-        } else {
-            System.out.println("Available books:");
-            books.forEach(System.out::println);
-        }
+    public Book findBookByTitle(String title) {
+        return books.stream()
+                .filter(book -> book.getTitle().equalsIgnoreCase(title))
+                .findFirst()
+                .orElse(null);
     }
 }

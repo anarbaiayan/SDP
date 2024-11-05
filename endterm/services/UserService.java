@@ -1,25 +1,37 @@
 package services;
 
 import models.User;
-import factory.UserFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserService {
-    public User loginUser(String userType) {
-        try {
-            User user = UserFactory.createUser(userType);
-            System.out.println("Successfully logged in as " + userType);
-            return user;
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid user type: " + userType);
-            return null;
-        }
+    private static UserService instance;
+    private List<User> users;
+
+    private UserService() {
+        users = new ArrayList<>();
     }
 
-    public void logoutUser(User user) {
-        if (user != null) {
-            System.out.println("Logging out " + user.getClass().getSimpleName());
-        } else {
-            System.out.println("No user to log out.");
+    public static UserService getInstance() {
+        if (instance == null) {
+            instance = new UserService();
         }
+        return instance;
+    }
+
+    public void addUser(String name) {
+        User user = new User(name);
+        users.add(user);
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public User findUserByName(String name) {
+        return users.stream()
+                .filter(user -> user.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
     }
 }
