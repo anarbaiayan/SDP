@@ -4,4 +4,4 @@ import models.Book;
 
 public interface PurchaseStrategy {
     void purchase(Book book);
-}
+}//
